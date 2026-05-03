@@ -1,0 +1,55 @@
+architecture:
+
+    system data_adquisition_system(
+        availability: critical 
+        performance: realtime 
+        security: restricted  
+        replicas: 1){
+            connectorSystem publisher data_adquisition_system -> early_warning_system
+            { timeout_ms: 100 encrypted: true }
+
+            connectorSystem publisher data_adquisition_system -> c4_system
+            { timeout_ms: 2000 encrypted: true }
+        }
+
+    system early_warning_system (
+        availability: high 
+        performance: realtime 
+        security: restricted 
+        replicas: 2){    
+            connectorSystem publisher early_warning_system -> c4_system
+            { timeout_ms: 500 encrypted: true }
+
+            connectorSystem HTTP early_warning_system -> personnel_orchestration_system
+            { timeout_ms: 2000 encrypted: true rate_limit: 1500 }
+        }
+
+    system resource_logistic_system ( 
+        availability: high 
+        performance: interactive 
+        security: restricted 
+        replicas: 2){
+            connectorSystem publisher resource_logistic_system -> c4_system
+            { timeout_ms: 500 encrypted: true }
+        }
+
+    system personnel_orchestration_system (
+        availability: high 
+        performance: interactive 
+        security: restricted 
+        replicas: 2){
+            connectorSystem publisher personnel_orchestration_system -> c4_system
+            { timeout_ms: 2000 encrypted: true rate_limit: 1500 }
+        }
+
+    system c4_system ( 
+        availability: standard 
+        performance: interactive 
+        security: restricted 
+        replicas: 1){
+            connectorSystem HTTP c4_system -> early_warning_system
+            { timeout_ms: 500 encrypted: true rate_limit: 10 }
+
+            connectorSystem HTTP c4_system -> resource_logistic_system
+            { timeout_ms: 2000 encrypted: true rate_limit: 400 }
+        }

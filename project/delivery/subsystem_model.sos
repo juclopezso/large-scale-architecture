@@ -1,19 +1,19 @@
 architecture:
 
-    system s1_data_adquisicion (availability: critical performance: realtime security: restricted) {
-        connectorSystem data_flow s1_data_adquisicion -> s2_notification
+    system data_adquisition_system (availability: critical performance: realtime security: restricted) {
+        connectorSystem data_flow data_adquisition_system -> early_warning_system
         { timeout_ms: 1000 encrypted: true rate_limit: 100 }
     }
 
-    system s5_command_center (availability: critical performance: realtime security: restricted) {
-        connectorSystem control_command s5_command_center -> s2_notification
+    system c4_system (availability: critical performance: realtime security: restricted) {
+        connectorSystem control_command c4_system -> early_warning_system
         { timeout_ms: 500 encrypted: true }
     }
 
-    system s4_personal_orq (availability: high performance: interactive security: internal) {
+    system personnel_orchestration_system (availability: high performance: interactive security: internal) {
     }
 
-    system s2_notification (availability: high performance: interactive security: restricted) {
+    system early_warning_system (availability: high performance: interactive security: restricted) {
 
         component communication api_gateway        api_gateway
         (availability: high performance: interactive security: restricted replicas: 2)
@@ -87,9 +87,9 @@ architecture:
         connector dependency  delivery_state_tracker -> event_bus
         connector dependency  notification_emitter  -> event_bus
 
-        connectorSystem event_notification s2_notification -> s5_command_center
+        connectorSystem event_notification early_warning_system -> c4_system
         { timeout_ms: 300 encrypted: true }
 
-        connectorSystem event_notification s2_notification -> s4_personal_orq
+        connectorSystem event_notification early_warning_system -> personnel_orchestration_system
         { timeout_ms: 2000 encrypted: true rate_limit: 100 }
     }

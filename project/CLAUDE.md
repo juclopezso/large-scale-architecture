@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project context
 
-Large-Scale Software Architecture course (LSSA 2026-I), Universidad Nacional de Colombia. The goal is to design, model, and verify the architecture of the **National Emergency Response and Crisis Management System** — a System of Systems (SoS) composed of five subsystems. This team owns the **s2_notification** subsystem.
+Large-Scale Software Architecture course (LSSA 2026-I), Universidad Nacional de Colombia. The goal is to design, model, and verify the architecture of the **National Emergency Response and Crisis Management System** — a System of Systems (SoS) composed of five subsystems. This team owns the **early_warning_system** subsystem.
 
 Deadline: **Monday May 4, 2026, 23h59**. Submission is a `.zip` named `group-G-team-X-p` uploaded to Google Classroom.
 
@@ -14,7 +14,7 @@ Deadline: **Monday May 4, 2026, 23h59**. Submission is a `.zip` named `group-G-t
 |---|---|---|
 | `delivery/metamodel.tx` | Done (shared with all 5 teams, must be identical) | |
 | `delivery/sos_model.sos` | **Missing** | Shared SoS-level model — also identical across teams |
-| `delivery/subsystem_model.sos` | Done | s2_notification subsystem |
+| `delivery/subsystem_model.sos` | Done | early_warning_system subsystem |
 | `delivery/verification.ipynb` | **Missing** | 4 iterative verification cycles, Python/Jupyter, Google Colab preferred |
 | `delivery/report.pdf` | **Missing** | Written report |
 
