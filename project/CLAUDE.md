@@ -13,9 +13,9 @@ Deadline: **Monday May 4, 2026, 23h59**. Submission is a `.zip` named `group-G-t
 | File | Status | Notes |
 |---|---|---|
 | `delivery/metamodel.tx` | Done (shared with all 5 teams, must be identical) | |
-| `delivery/sos_model.sos` | **Missing** | Shared SoS-level model — also identical across teams |
+| `delivery/sos_model.sos` | Done | Shared SoS-level model — also identical across teams |
 | `delivery/subsystem_model.sos` | Done | early_warning_system subsystem |
-| `delivery/verification.ipynb` | **Missing** | 4 iterative verification cycles, Python/Jupyter, Google Colab preferred |
+| `delivery/verification.ipynb` | In progress | 4 iterative verification cycles — scenarios and tactics implemented, summary table pending |
 | `delivery/report.pdf` | **Missing** | Written report |
 
 ## Metamodel architecture (`metamodel.tx`)
