@@ -1,0 +1,88 @@
+Model:
+    'architecture' ':'
+    systems*=System
+;
+System:
+    'system' name=ID (properties=ComponentProperties)? '{'
+        elements*=Element
+    '}'
+;
+Element:
+    Component | Connector | ConnectorSystem
+;
+ComponentSystem:
+    Component | System
+;
+Component:
+    'component' tier=TierType  type=ComponentType name=ID (properties=ComponentProperties)?
+;
+Connector:
+    'connector' type=ConnectorType from=[Component] '->' to=[Component]
+    (properties=ConnectorProperties)?
+;
+ConnectorSystem:
+    'connectorSystem' type=ConnectorType from=[ComponentSystem] '->' to=[ComponentSystem]
+    (properties=ConnectorProperties)?
+;
+
+ComponentProperties:
+'('
+    ('availability' ':' availability=AvailabilityLevel)?
+    ('performance' ':' performance=PerformanceLevel)?
+    ('security'  ':' security=SecurityLevel)?
+    ('replicas' ':' replicas=INT)?
+    ('mem_limit' ':' mem_limit=STRING)?
+    ('cpu_limit' ':' cpu_limit=FLOAT)?
+')'
+;
+ConnectorProperties:
+    '{'
+        ('timeout_ms' ':' timeout_ms=INT)?
+        ('encrypted' ':' encrypted=BOOL)?
+        ('rate_limit' ':' rate_limit=INT)?
+    '}'
+;
+TierType:
+'presentation' | 'communication' | 'logic' | 'data' | 'physical'
+;
+ComponentType:
+    'api_gateway' |
+    'edge_gateway_hardware' |
+    'microservice' |
+    'database' |
+    'sub_system' |
+    'external_service' |
+    'sensor' |
+    'web_interface' |
+    'message_broker' |
+    'cache' |
+    'repository' |
+    'node' |
+    'firewall'
+;
+ConnectorType:
+    'data_flow' |
+    'control_command' |
+    'event_notification'|
+    'dependency' |
+    'HTTP' |
+    'publisher' |
+    'subscribed' |
+    'iot_device' |
+    'db_write_or_read'
+;
+AvailabilityLevel:
+    'critical' | 'high' | 'standard'
+;
+
+PerformanceLevel:
+    'realtime' | 'interactive' | 'batch'
+;
+
+SecurityLevel:
+    'restricted' | 'internal' | 'public'
+;
+
+Comment:
+    /\/\/.*$/
+;

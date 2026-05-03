@@ -1,0 +1,95 @@
+architecture:
+
+    system s1_data_adquisicion (availability: critical performance: realtime security: restricted) {
+        connectorSystem data_flow s1_data_adquisicion -> s2_notification
+        { timeout_ms: 1000 encrypted: true rate_limit: 100 }
+    }
+
+    system s5_command_center (availability: critical performance: realtime security: restricted) {
+        connectorSystem control_command s5_command_center -> s2_notification
+        { timeout_ms: 500 encrypted: true }
+    }
+
+    system s4_personal_orq (availability: high performance: interactive security: internal) {
+    }
+
+    system s2_notification (availability: high performance: interactive security: restricted) {
+
+        component communication api_gateway        api_gateway
+        (availability: high performance: interactive security: restricted replicas: 2)
+
+        component logic microservice               alert_rules_engine_ms
+        (availability: high performance: realtime security: restricted replicas: 2)
+
+        component logic microservice               event_bus
+        (availability: critical performance: realtime security: restricted replicas: 3)
+
+        component logic microservice               delivery_state_tracker
+        (availability: high performance: interactive security: internal)
+
+        component logic microservice               notification_emitter
+        (availability: high performance: interactive security: restricted replicas: 2)
+
+        component logic microservice               data_validator
+        (availability: standard performance: interactive security: restricted)
+
+        component logic external_service           sms_service
+        component logic external_service           cap_radio_difussion
+        component logic external_service           notification_push
+
+        component data database                    delivery_state_db
+        (availability: high performance: interactive security: internal)
+
+        component data database                    alerts_events_db
+        (availability: high performance: interactive security: restricted)
+
+        component data cache                       alerts_events_cache
+        (availability: high performance: realtime security: restricted)
+
+        connector HTTP        api_gateway            -> data_validator
+        { timeout_ms: 500 encrypted: false rate_limit: 1000 }
+
+        connector publisher   data_validator         -> event_bus
+        { timeout_ms: 300 encrypted: false }
+
+        connector subscribed  event_bus              -> alert_rules_engine_ms
+        { timeout_ms: 200 encrypted: false }
+
+        connector subscribed  event_bus              -> notification_emitter
+        { timeout_ms: 200 encrypted: false }
+
+        connector subscribed  event_bus              -> delivery_state_tracker
+        { timeout_ms: 200 encrypted: false }
+
+        connector db_write_or_read  alert_rules_engine_ms  -> alerts_events_db
+        { timeout_ms: 300 encrypted: false }
+
+        connector db_write_or_read  alert_rules_engine_ms  -> alerts_events_cache
+        { timeout_ms: 100 encrypted: false }
+
+        connector HTTP        notification_emitter   -> sms_service
+        { timeout_ms: 3000 encrypted: true }
+
+        connector HTTP        notification_emitter   -> cap_radio_difussion
+        { timeout_ms: 2000 encrypted: true }
+
+        connector HTTP        notification_emitter   -> notification_push
+        { timeout_ms: 2000 encrypted: true }
+
+        connector event_notification  notification_emitter   -> delivery_state_tracker
+        { timeout_ms: 500 encrypted: false }
+
+        connector db_write_or_read  delivery_state_tracker -> delivery_state_db
+        { timeout_ms: 300 encrypted: false }
+
+        connector dependency  alert_rules_engine_ms -> alerts_events_db
+        connector dependency  alert_rules_engine_ms -> event_bus
+        connector dependency  delivery_state_tracker -> event_bus
+        connector dependency  notification_emitter  -> event_bus
+
+        connectorSystem event_notification s2_notification -> s5_command_center
+        { timeout_ms: 300 encrypted: true }
+
+        connectorSystem event_notification s2_notification -> s4_personal_orq
+        { timeout_ms: 2000 encrypted: true rate_limit: 100 }
+    }
